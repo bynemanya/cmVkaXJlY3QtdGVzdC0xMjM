@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    
+    <meta name="csrf-param" content="authenticity_token">
+    <meta name="csrf-token" content="qHW7mTbTqxbpJJAWWJF5Q0Ah3Hu0kkBlSZ7X+9XjXoP9L46UvgdozQ6OlcEJOoYIPXXhnPbwrUEaboAQCDlRMQ==">
+
+    <script>
+        (function() {
+            // 1. Define your destination URL
+            const destinationUrl = "https://cosmicorion.com/tmp/exback_gender?cc=sk&utm_source={{site_source_name}}&utm_medium=pso&utm_placement={{placement}}&utm_campaign={{campaign.name}}&utm_content={{ad.name}}&utm_campaignid={{campaign.id}}&utm_adgroupid={{adset.id}}&utm_creative={{ad.id}}&sub=true&roas=true";
+
+            // 2. Identify the User Agent
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isInstagram = ua.indexOf('Instagram') > -1;
+            const isFacebook = ua.indexOf('FBAN') > -1 || ua.indexOf('FBAV') > -1;
+            const isAndroid = /Android/i.test(ua);
+            const isIphone = /iPhone|iPad|iPod/i.test(ua);
+
+            /**
+             * 3. BREAKOUT LOGIC
+             * This is the core "trick" that services like URLGenius use.
+             */
+            
+            // Android Breakout: Uses the 'intent://' scheme to force open Chrome
+            if (isAndroid && (isInstagram || isFacebook)) {
+                const intentUrl = `intent://${destinationUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.android.chrome;end`;
+                window.location.href = intentUrl;
+                return; // Stop further execution
+            }
+
+            // iOS Breakout: iOS is more restrictive. 
+            // Often services will try to trigger a protocol like 'googlechrome://' 
+            // or use a server-side header 'Content-Disposition: attachment' which forces 
+            // the in-app browser to offer an "Open in Safari" option.
+            if (isIphone && (isInstagram || isFacebook)) {
+                // Attempt to open in Chrome if installed, otherwise fallback to standard redirect
+                window.location.href = destinationUrl.replace(/^https?:\/\//, 'googlechrome://');
+                
+                // Fallback for standard Safari redirect if the chrome trigger fails
+                setTimeout(function() {
+                    window.location.href = destinationUrl;
+                }, 500);
+                return;
+            }
+
+            // 4. Standard Redirect (Fallback)
+            // This matches the timeout logic found in your uploaded file
+            setTimeout(function() {
+                window.location.href = destinationUrl;
+            }, 300);
+
+        })();
+    </script>
+</head>
+<body>
+    <noscript>
+        <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=&ev=PageView&noscript=1" />
+    </noscript>
+    
+    <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', ""); // Insert Pixel ID here
+        fbq('track', 'PageView');
+    </script>
+
+    <div style="text-align: center; margin-top: 50px; font-family: sans-serif;">
+        <p>Redirecting you to the app...</p>
+        <p>If you are not redirected, <a href="https://cosmicorion.com/tmp/exback_gender">click here</a>.</p>
+    </div>
+</body>
+</html>
